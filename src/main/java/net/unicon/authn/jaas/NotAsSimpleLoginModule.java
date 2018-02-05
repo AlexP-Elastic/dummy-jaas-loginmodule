@@ -5,7 +5,14 @@ import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 
 /**
  * @author Jj!
@@ -46,14 +53,26 @@ public class NotAsSimpleLoginModule implements LoginModule {
     }
 
     public boolean commit() throws LoginException {
+        if (this.succeeded) {
+            // Add sample principal
+            final List<IdPAttributeValue<?>> idpAttrVals = new LinkedList<IdPAttributeValue<?>>();
+            final IdPAttributeValue idpAttrVal = new StringAttributeValue("1");
+            idpAttrVals.add(idpAttrVal);
+            final IdPAttribute idpAttribute = new IdPAttribute("uid");
+            idpAttribute.setValues(idpAttrVals);
+            final IdPAttributePrincipal idpPrincipal = new IdPAttributePrincipal(idpAttribute);
+            this.subject.getPrincipals().add(idpPrincipal);
+        }
         return this.succeeded;
     }
 
     public boolean abort() throws LoginException {
-        return false;
+        return this.logout();
     }
 
     public boolean logout() throws LoginException {
-        return false;
+        subject.getPrincipals().clear();
+        this.succeeded = false;
+        return true;
     }
 }

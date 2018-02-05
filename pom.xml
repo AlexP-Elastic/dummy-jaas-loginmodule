@@ -21,4 +21,20 @@
             </plugin>
         </plugins>
     </build>
-</project>
+
+    <repositories>
+        <repository>
+            <id>shib-1</id>
+            <name>Shibboleth</name>
+            <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/net.shibboleth.idp/idp-core -->
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-authn-api</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+    </dependencies></project>
