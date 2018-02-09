@@ -22,6 +22,7 @@ public class NotAsSimpleLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
     private Map sharedState;
     private Map options;
+    private String username;
 
     private boolean succeeded = false;
 
@@ -45,6 +46,7 @@ public class NotAsSimpleLoginModule implements LoginModule {
         }
 
         if (nameCallback.getName().equals(new String(passwordCallback.getPassword()))) {
+            this.username = nameCallback.getName();
             this.succeeded = true;
             return true;
         }
@@ -56,7 +58,7 @@ public class NotAsSimpleLoginModule implements LoginModule {
         if (this.succeeded) {
             // Add sample principal
             final List<IdPAttributeValue<?>> idpAttrVals = new LinkedList<IdPAttributeValue<?>>();
-            final IdPAttributeValue idpAttrVal = new StringAttributeValue("1");
+            final IdPAttributeValue idpAttrVal = new StringAttributeValue(this.username);
             idpAttrVals.add(idpAttrVal);
             final IdPAttribute idpAttribute = new IdPAttribute("uid");
             idpAttribute.setValues(idpAttrVals);
@@ -73,6 +75,7 @@ public class NotAsSimpleLoginModule implements LoginModule {
     public boolean logout() throws LoginException {
         subject.getPrincipals().clear();
         this.succeeded = false;
+        this.username = null;
         return true;
     }
 }
